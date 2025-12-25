@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Merry Christmas!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Mali:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            /* --- ĐÃ SỬA: CHUYỂN VỀ TÔNG MÀU ĐỎ --- */
+            background: linear-gradient(135deg, #ef5350, #b71c1c);
+            overflow: hidden;
+            font-family: "Mali", cursive;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Hiệu ứng tuyết rơi nền */
+        .snow-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background-image: url('https://library.kissclipart.com/20180831/qwe/kissclipart-falling-snow-png-clipart-snow-af33226a273b4d6d.png');
+            animation: snowBackground 15s linear infinite;
+            opacity: 0.4;
+            z-index: 0;
+        }
+        @keyframes snowBackground {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 500px; }
+        }
+
+        /* Khung thông điệp chính giữa */
+        .center-message {
+            position: absolute;
+            top: 45%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 40px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 
+                        0 0 0 5px rgba(185, 28, 28, 0.8); 
+            z-index: 5;
+            width: 90%;
+            max-width: 500px;
+            animation: pulse 3s ease-in-out infinite;
+            border: 3px solid #b91c1c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.02); }
+        }
+
+        .center-message strong {
+            display: block;
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: 3rem;
+            color: #b91c1c;
+            margin-bottom: 5px;
+            font-weight: 700;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        .center-message span {
+            color: #0f5132;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        /* --- PHẦN GIF Ở GIỮA --- */
+        .center-gif {
+            position: fixed;
+            bottom: 0;        
+            left: 50%;        
+            transform: translateX(-50%); 
+            width: 200px;     
+            max-width: 50vw;
+            z-index: 10;
+            pointer-events: none; 
+        }
+
+        /* Popup lời chúc */
+        .popup {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: #fff;
+            border-radius: 20px;
+            border: 5px solid #b91c1c;
+            padding: 20px;
+            text-align: center;
+            z-index: 100;
+            width: 90%;
+            max-width: 350px;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        
+        .popup.active { display: block; animation: popupIn 0.5s forwards; }
+
+        @keyframes popupIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .popup img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #0f5132;
+        }
+
+        .popup p { color: #b91c1c; font-weight: 600; font-size: 1.1rem; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 99; display: none;
+            backdrop-filter: blur(3px);
+        }
+        .overlay.active { display: block; }
+
+        /* Vật thể rơi (Emoji) */
+        .falling-item {
+            position: absolute;
+            top: -50px;
+            font-size: 35px;
+            cursor: pointer;
+            user-select: none;
+            z-index: 20;
+            animation: fall linear forwards;
+        }
+        .falling-item:hover { transform: scale(1.2); }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* Hiệu ứng nổ */
+        .sparkle {
+            position: absolute; pointer-events: none;
+            animation: explode 0.8s ease-out forwards;
+            font-size: 20px; z-index: 101;
+        }
+        @keyframes explode {
+            to { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="snow-bg"></div>
+
+    <div class="center-message">
+        <strong>Merry Christmas</strong>
+        <span id="centerText">
+            Chúc bạn một mùa giáng sinh<br>
+            thật ấm áp và an lành! ❤️<br>
+            <span style="font-size: 0.9rem; opacity: 0.8">(Bấm vào hộp quà rơi nhé!)</span>
+        </span>
+    </div>
+
+    <img src="https://media.giphy.com/media/YJ5OlVLZ2QNl6/giphy.gif" alt="Christmas Cat" class="center-gif" />
+
+    <div class="popup" id="popup">
+        <img id="popupImage" src="" alt="Gift">
+        <p id="popupMessage">Lời chúc...</p>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <audio id="player" loop>
+        <source src="https://docs.google.com/uc?export=download&id=1W9g-qZ_w55H_hZqKqM6U4vWzG3sYqG_n" type="audio/mp3">
+    </audio>
+
+    <script>
+        // --- CẤU HÌNH ---
+        const messages = [
+            {
+                img: "https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=400",
+                text: "Giáng sinh vui vẻ! Mong mọi điều tốt đẹp nhất sẽ đến với cậu. 🎅"
+            },
+            {
+                img: "https://images.unsplash.com/photo-1512474932049-78ac69ede12c?w=400",
+                text: "Chúc cậu luôn xinh đẹp, rạng rỡ và hạnh phúc nhé! 🎄"
+            },
+            {
+                img: "https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=400",
+                text: "Món quà to bự nhất của tớ chính là cậu đó! ❤️"
+            }
+        ];
+
+        const fallingIcons = ['🎁', '❄️', '🎄', '🍪', '🔔'];
+
+        // --- CODE XỬ LÝ ---
+        let msgIndex = 0;
+        const popup = document.getElementById("popup");
+        const overlay = document.getElementById("overlay");
+        const centerText = document.getElementById("centerText");
+
+        function createSparkles(x, y) {
+            for (let i = 0; i < 8; i++) {
+                const s = document.createElement('div');
+                s.className = 'sparkle';
+                s.textContent = '✨';
+                s.style.left = x + 'px'; s.style.top = y + 'px';
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 50 + Math.random() * 50;
+                s.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+                s.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+                document.body.appendChild(s);
+                setTimeout(() => s.remove(), 800);
+            }
+        }
+
+        function createFallingItem() {
+            const item = document.createElement("div");
+            item.className = "falling-item";
+            item.textContent = fallingIcons[Math.floor(Math.random() * fallingIcons.length)];
+            item.style.left = Math.random() * (window.innerWidth - 40) + "px";
+            item.style.animationDuration = (4 + Math.random() * 5) + "s";
+            
+            item.onclick = (e) => {
+                createSparkles(e.clientX, e.clientY);
+                item.remove();
+                
+                // Hiện popup
+                const data = messages[msgIndex];
+                document.getElementById("popupImage").src = data.img;
+                document.getElementById("popupMessage").textContent = data.text;
+                popup.classList.add("active");
+                overlay.classList.add("active");
+                
+                popup.dataset.msg = data.text; 
+                msgIndex = (msgIndex + 1) % messages.length;
+            };
+
+            document.body.appendChild(item);
+            setTimeout(() => { if(item.parentNode) item.remove() }, 9000);
+        }
+
+        overlay.onclick = () => {
+            popup.classList.remove("active");
+            overlay.classList.remove("active");
+            if(popup.dataset.msg) centerText.innerHTML = popup.dataset.msg;
+        };
+
+        document.body.onclick = () => {
+            const audio = document.getElementById("player");
+            if(audio.paused) audio.play();
+        };
+
+        setInterval(createFallingItem, 700);
+    </script>
+</body>
+</html>
